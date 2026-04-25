@@ -175,6 +175,3 @@ cursor-transcript-backup scan
 If Cursor has never created agent transcripts on that machine, there may be
 nothing to back up yet.
 
-See the implementation plan:
-
-- `docs/plan/todo/2026-04-25-cursor-transcript-backup-cli.md`
