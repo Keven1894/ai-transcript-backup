@@ -1,0 +1,18 @@
+[project]
+name = "cursor-transcript-backup"
+version = "0.1.0"
+description = "Back up Cursor agent transcripts to a shared or network drive."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.scripts]
+cursor-transcript-backup = "cursor_transcript_backup.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
