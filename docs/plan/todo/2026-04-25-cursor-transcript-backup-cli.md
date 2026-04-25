@@ -49,7 +49,7 @@ Manual copying is error-prone:
 
 - Support destination forms:
   - Windows drive-letter network mount: `T:\Transcripts-2026`
-  - Windows UNC path: `\\dpantherfi03.fiu.edu\Transcripts-2026`
+  - Windows UNC path: `\\server.example.edu\Transcripts-2026`
   - Linux / Samba mount path: `/mnt/transcripts-2026`
 - Dry run mode.
 - Idempotent copy:
@@ -88,7 +88,7 @@ cursor-transcript-backup backup \
 
 ```bash
 cursor-transcript-backup backup \
-  --dest-root "\\dpantherfi03.fiu.edu\Transcripts-2026" \
+  --dest-root "\\server.example.edu\Transcripts-2026" \
   --person-folder "Boyuan-Keven-Guan"
 ```
 

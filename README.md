@@ -42,6 +42,26 @@ PYTHONPATH=src python -m cursor_transcript_backup.cli --help
 
 Always dry-run first.
 
+### Option A: Configure Locally With `.env`
+
+Copy `.env.example` to `.env` and fill in your own private destination:
+
+```text
+CURSOR_TRANSCRIPT_DEST_ROOT=\\server.example.edu\Transcripts-2026
+CURSOR_TRANSCRIPT_PERSON_FOLDER=Your-Name
+```
+
+Then run:
+
+```bash
+cursor-transcript-backup backup --dry-run
+cursor-transcript-backup backup --manifest
+```
+
+`.env` is ignored by git so private server names and share paths stay local.
+
+### Option B: Pass Paths On The Command Line
+
 ### Windows Network Drive
 
 ```powershell
@@ -64,7 +84,7 @@ cursor-transcript-backup backup `
 
 ```powershell
 cursor-transcript-backup backup `
-  --dest-root "\\dpantherfi03.fiu.edu\Transcripts-2026" `
+  --dest-root "\\server.example.edu\Transcripts-2026" `
   --person-folder "Boyuan-Keven-Guan" `
   --dry-run
 ```
@@ -105,6 +125,7 @@ transcript files including subagents.
 | `--dest-root <path>` | Shared drive root. Required for `backup`. |
 | `--person-folder <name>` | User-specific folder under destination root. Required for `backup`. |
 | `--source-root <path>` | Override source root. Defaults to `~/.cursor/projects`. |
+| `--env-file <path>` | Local config file. Defaults to `.env`. |
 | `--dry-run` | Show what would be copied without writing transcript files. |
 | `--include-temp` | Include Cursor scratch/temp workspaces. |
 | `--manifest` | Write `manifest.json` under the destination person folder. |
@@ -126,6 +147,21 @@ window and run the command there. UNC paths may also work:
 
 ```powershell
 --dest-root "\\server\share"
+```
+
+### I do not want to expose a private server name in shell history
+
+Put it in `.env`:
+
+```text
+CURSOR_TRANSCRIPT_DEST_ROOT=\\server.example.edu\share
+CURSOR_TRANSCRIPT_PERSON_FOLDER=Your-Name
+```
+
+Then run:
+
+```bash
+cursor-transcript-backup backup --dry-run
 ```
 
 ### The tool says "No transcripts found"

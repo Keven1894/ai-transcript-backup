@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .copy import copy_transcripts
 from .discover import count_files, count_transcripts, discover_transcripts
+from .env import load_env
 from .manifest import build_manifest, write_manifest
 from .paths import (
     PathValidationError,
@@ -28,10 +29,17 @@ def build_parser() -> argparse.ArgumentParser:
         "backup",
         help="Discover local Cursor transcripts and copy them to a destination.",
     )
-    backup.add_argument("--dest-root", required=True, help="Shared drive root.")
+    backup.add_argument(
+        "--dest-root",
+        default=None,
+        help=(
+            "Shared drive root. Can also be set with "
+            "CURSOR_TRANSCRIPT_DEST_ROOT in .env."
+        ),
+    )
     backup.add_argument(
         "--person-folder",
-        required=True,
+        default=None,
         help="User-specific folder under the destination root.",
     )
     backup.add_argument(
@@ -58,6 +66,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--verbose",
         action="store_true",
         help="Print file-level copy/skip decisions.",
+    )
+    backup.add_argument(
+        "--env-file",
+        default=".env",
+        help="Path to local .env config file (default: .env).",
     )
     scan = subcommands.add_parser(
         "scan",
@@ -103,10 +116,30 @@ def run_scan(args: argparse.Namespace) -> int:
 
 
 def run_backup(args: argparse.Namespace) -> int:
+    env = load_env(args.env_file)
+    dest_root = args.dest_root or env.get("CURSOR_TRANSCRIPT_DEST_ROOT")
+    person_arg = args.person_folder or env.get("CURSOR_TRANSCRIPT_PERSON_FOLDER")
+    source_arg = args.source_root or env.get("CURSOR_TRANSCRIPT_SOURCE_ROOT")
+
+    if not dest_root:
+        print(
+            "ERROR: --dest-root is required unless CURSOR_TRANSCRIPT_DEST_ROOT "
+            "is set in .env",
+            file=sys.stderr,
+        )
+        return 3
+    if not person_arg:
+        print(
+            "ERROR: --person-folder is required unless "
+            "CURSOR_TRANSCRIPT_PERSON_FOLDER is set in .env",
+            file=sys.stderr,
+        )
+        return 3
+
     try:
-        person_folder = validate_person_folder(args.person_folder)
-        source_root = resolve_source_root(args.source_root)
-        dest_person_root = destination_person_root(args.dest_root, person_folder)
+        person_folder = validate_person_folder(person_arg)
+        source_root = resolve_source_root(source_arg)
+        dest_person_root = destination_person_root(dest_root, person_folder)
     except PathValidationError as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 3
